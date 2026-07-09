@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>QUESTIONS (using to be) - Santiago</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: #1a1a2e; 
+            color: #f0f0f0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            padding: 20px;
+        }
+        .exercise-container { 
+            background-color: #16213e; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4); 
+            max-width: 900px; 
+            width: 100%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        h1 { color: #4db8ff; text-align: center; width: 100%; margin-bottom: 2px; text-transform: uppercase; }
+        .title-card {
+            color: #80d4ff;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 8px;
+            font-size: 1.4em;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .subtitle { 
+            color: #ff9e1b; 
+            text-align: center; 
+            width: 100%; 
+            margin-bottom: 25px; 
+            font-style: italic;
+            font-size: 1.1em;
+        }
+
+        .id-card {
+            flex: 1;
+            min-width: 250px;
+            background-color: #ffffff;
+            color: #333;
+            padding: 20px;
+            border-radius: 8px;
+            border-top: 15px solid #4db8ff;
+        }
+        .photo-container {
+            width: 100%;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        .photo-container img {
+            width: 100%;
+            border-radius: 4px;
+            display: block;
+        }
+        .id-data { font-size: 0.85em; line-height: 1.4; }
+        .id-label { font-weight: bold; color: #0f3460; text-transform: uppercase; display: block; margin-top: 8px; }
+        .id-value { display: block; margin-bottom: 5px; font-size: 1.1em; border-bottom: 1px solid #ddd; }
+
+        .questions-column { flex: 2; min-width: 350px; }
+        .question-block {
+            margin-bottom: 15px;
+            background: rgba(255,255,255,0.03);
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .scrambled-words {
+            font-style: italic;
+            color: #ff9e1b; 
+            margin-bottom: 5px;
+            display: block;
+            font-size: 0.95em;
+        }
+        input { 
+            width: 95%; 
+            background-color: #0f3460; 
+            border: 2px solid #4db8ff; 
+            border-radius: 5px; 
+            padding: 10px; 
+            color: white; 
+            font-size: 1em;
+            outline: none;
+        }
+        .correct { border-color: #28a745 !important; background-color: #1a3d24 !important; }
+        .incorrect { border-color: #c0392b !important; background-color: #421c1c !important; }
+
+        .controls { width: 100%; text-align: center; margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .btn-group { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; width: 100%; }
+        button { 
+            background-color: #4db8ff; color: #1a1a2e; border: none; 
+            padding: 15px 40px; border-radius: 5px; cursor: pointer; 
+            font-weight: bold; font-size: 1.1em;
+            transition: background-color 0.2s;
+        }
+        button:hover { background-color: #80d4ff; }
+        .btn-email { background-color: #ff9e1b; color: #1a1a2e; }
+        .btn-email:hover { background-color: #ffb84d; }
+        #scoreDisplay { font-weight: bold; font-size: 1.3em; margin-top: 5px; }
+    </style>
+</head>
+<body>
+
+<div class="exercise-container">
+    <h1>QUESTIONS (using to be)</h1>
+    <div class="title-card">ID CARD</div>
+    <div class="subtitle">Put the questions in the correct order.</div>
+
+    <div class="id-card">
+        <div class="photo-container">
+            <img src="https://images.pexels.com/photos/1212984/pexels-photo-1212984.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Santiago">
+        </div>
+        <div class="id-data">
+            <span class="id-label">First Name</span>
+            <span class="id-value">Santiago</span>
+            <span class="id-label">Surname</span>
+            <span class="id-value">García Ramírez</span>
+            <span class="id-label">Country</span>
+            <span class="id-value">Spain</span>
+            <span class="id-label">Age</span>
+            <span class="id-value">19</span>
+            <span class="id-label">Phone Number</span>
+            <span class="id-value">934298701</span>
+            <span class="id-label">Email Address</span>
+            <span class="id-value">grsantiago@hwmail.com</span>
+            <span class="id-label">Married?</span>
+            <span class="id-value">No</span>
+        </div>
+    </div>
+    
+    <div class="questions-column">
+        <div class="question-block">
+            <span class="scrambled-words">name / What's / first / his / ?</span>
+            <input type="text" data-ans="What's his first name?">
+        </div>
+        <div class="question-block">
+            <span class="scrambled-words">surname / What's / his / ?</span>
+            <input type="text" data-ans="What's his surname?">
+        </div>
+        <div class="question-block">
+            <span class="scrambled-words">he / from / Where's / ?</span>
+            <input type="text" data-ans="Where's he from?">
+        </div>
+        <div class="question-block">
+            <span class="scrambled-words">he / old / How / is / ?</span>
+            <input type="text" data-ans="How old is he?">
+        </div>
+        <div class="question-block">
+            <span class="scrambled-words">his / phone / What's / number / ?</span>
+            <input type="text" data-ans="What's his phone number?">
+        </div>
+        <div class="question-block">
+            <span class="scrambled-words">address / email / What's / his / ?</span>
+            <input type="text" data-ans="What's his email address?">
+        </div>
+        <div class="question-block">
+            <span class="scrambled-words">married / he / Is / ?</span>
+            <input type="text" data-ans="Is he married?">
+        </div>
+    </div>
+
+    <div class="controls">
+        <div class="btn-group">
+            <button onclick="checkAnswers()">CHECK ANSWERS</button>
+            <button class="btn-email" onclick="sendAnswersByEmail()">SEND ANSWERS</button>
+        </div>
+        <div id="scoreDisplay"></div>
+    </div>
+</div>
+
+<script>
+    let finalScoreText = "Not checked yet";
+
+    function checkAnswers() {
+        const inputs = document.querySelectorAll('input');
+        let correctCount = 0;
+        inputs.forEach(input => {
+            const userAns = input.value.trim().toLowerCase().replace('?', '');
+            const correctAns = input.getAttribute('data-ans').toLowerCase().replace('?', '');
+            
+            if (userAns === correctAns) {
+                input.className = 'correct';
+                correctCount++;
+            } else {
+                input.className = 'incorrect';
+            }
+        });
+        const score = Math.round((correctCount / inputs.length) * 100);
+        finalScoreText = score + "%";
+        const scoreDiv = document.getElementById('scoreDisplay');
+        scoreDiv.innerText = "Final Score: " + finalScoreText;
+        scoreDiv.style.color = score === 100 ? "#28a745" : "#f0f0f0";
+    }
+
+    function sendAnswersByEmail() {
+        const inputs = document.querySelectorAll('input');
+        
+        // RECOMENDACIÓN: Podés cambiar tu-email@ejemplo.com por tu dirección de correo real
+        const teacherEmail = "reymariac@gmail.com"; 
+        const subject = encodeURIComponent("Exercise Results: QUESTIONS (using to be) - Santiago");
+        
+        let bodyText = "Hello!\n\nHere are my results for the exercise:\n\n";
+        bodyText += "FINAL SCORE: " + finalScoreText + "\n\n";
+        bodyText += "DETAILED ANSWERS:\n";
+        bodyText += "=============================\n";
+        
+        inputs.forEach((input, index) => {
+            const scrambled = input.previousElementSibling.innerText;
+            const studentAns = input.value.trim() || "(Empty)";
+            bodyText += `Question ${index + 1} (${scrambled}): ${studentAns}\n`;
+        });
+        
+        bodyText += "=============================\n";
+        bodyText += "\nRegards,";
+        
+        const mailtoUrl = `mailto:${teacherEmail}?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+        window.location.href = mailtoUrl;
+    }
+</script>
+</body>
+</html>
