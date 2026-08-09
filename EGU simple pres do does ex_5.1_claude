@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Exercise 5.1 - Present Simple -s/-es</title>
+<style>
+  :root{ --red:#b32d2e; --orange:#e07b1a; --cream:#faf3e6; --dark:#2b2b2b; --green:#2e7d32; --wrong:#b32d2e; }
+  * { box-sizing: border-box; }
+  body{ font-family: Georgia, 'Times New Roman', serif; background: var(--cream); margin:0; padding:24px; color: var(--dark); }
+  .card{ max-width: 720px; margin: 0 auto; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+  .header{ background: var(--red); color: #fff; padding: 18px 24px; display:flex; align-items:baseline; gap:12px; }
+  .header .unit-badge{ background: var(--orange); padding: 4px 10px; border-radius: 4px; font-weight:bold; font-size: 0.9em; }
+  .header h1{ font-size: 1.3em; margin:0; font-weight: normal; }
+  .subheader{ background: var(--orange); color:#fff; padding: 8px 24px; font-size: 0.95em; }
+  .body{ padding: 24px; }
+  .grid{ display:grid; grid-template-columns: 1fr 1fr; gap: 14px 24px; }
+  @media (max-width: 560px){ .grid{ grid-template-columns: 1fr; } }
+  .item{ display:flex; gap: 10px; align-items:flex-start; padding: 10px 12px; border-radius: 6px; background: #fdfaf3; border: 1px solid #eee2c8; }
+  .item.example{ background: #f2f2f2; border-color: #ddd; }
+  .num{ font-weight:bold; color: var(--orange); min-width: 20px; }
+  .item-content{ flex:1; }
+  .sentence-line{ display:flex; align-items:center; flex-wrap:wrap; gap:6px; }
+  .verb-label{ font-style: italic; color:#666; margin-right: 2px; }
+  input[type=text]{ flex:1; min-width: 90px; padding: 8px 10px; font-family: Georgia, serif; font-size: 1em; border: 1px solid #ccc; border-radius: 4px; background: #fff; }
+  input[type=text]:disabled{ background:#f2f2f2; color:#555; font-style: italic; }
+  .feedback{ margin-top: 6px; font-size: 0.92em; display:none; }
+  .feedback.show{ display:block; }
+  .feedback.correct{ color: var(--green); }
+  .feedback.incorrect{ color: var(--wrong); }
+  .correct-answer{ font-style: italic; }
+  #check-btn, #reset-btn, #email-btn{ font-family: Georgia, serif; font-size: 1em; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; margin-top: 18px; }
+  #check-btn{ background: var(--red); color: #fff; }
+  #check-btn:hover{ background:#912323; }
+  #reset-btn{ background: #eee; color: var(--dark); margin-left: 10px; }
+  #reset-btn:hover{ background:#ddd; }
+  #email-btn{ background: var(--orange); color: #fff; margin-left: 10px; }
+  #email-btn:hover{ background:#c46813; }
+  #score-panel{ display:none; margin-top: 20px; padding: 16px; background: #fdf0e0; border: 1px solid var(--orange); border-radius: 8px; text-align:center; }
+  #score-panel.show{ display:block; }
+  #score-text{ font-size: 1.3em; font-weight:bold; color: var(--red); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <span class="unit-badge">5</span>
+    <h1>Exercise 5.1 &mdash; Verbs with -s or -es</h1>
+  </div>
+  <div class="subheader">Write these verbs with -s or -es.</div>
+  <div class="body">
+    <div class="grid" id="items"></div>
+    <button id="check-btn" onclick="checkAnswers()">Check answers</button>
+    <button id="reset-btn" onclick="resetAll()">Reset</button>
+    <button id="email-btn" onclick="sendEmail()">Send by email</button>
+    <div id="score-panel"><div id="score-text"></div></div>
+  </div>
+</div>
+
+<script>
+const data = [
+  { verb: "read", pre: "she", answer: "reads", example: true },
+  { verb: "think", pre: "he", answer: "thinks" },
+  { verb: "fly", pre: "it", answer: "flies" },
+  { verb: "dance", pre: "he", answer: "dances" },
+  { verb: "have", pre: "she", answer: "has" },
+  { verb: "finish", pre: "it", answer: "finishes" }
+];
+
+const itemsDiv = document.getElementById("items");
+
+data.forEach((item, i) => {
+  const num = i + 1;
+  const div = document.createElement("div");
+  div.className = "item" + (item.example ? " example" : "");
+
+  if (item.example) {
+    div.innerHTML = `
+      <div class="num">${num}</div>
+      <div class="item-content">
+        <div class="sentence-line">
+          <span class="verb-label">(${item.verb})</span>
+          <span>${item.pre}</span>
+          <input type="text" value="${item.answer}" disabled>
+        </div>
+      </div>
+    `;
+  } else {
+    div.innerHTML = `
+      <div class="num">${num}</div>
+      <div class="item-content">
+        <div class="sentence-line">
+          <span class="verb-label">(${item.verb})</span>
+          <span>${item.pre}</span>
+          <input type="text" id="input-${num}" placeholder="...">
+        </div>
+        <div class="feedback" id="feedback-${num}"></div>
+      </div>
+    `;
+  }
+  itemsDiv.appendChild(div);
+});
+
+function normalize(str) { return str.trim().toLowerCase().replace(/\s+/g, " "); }
+
+function checkAnswers() {
+  let correctCount = 0, total = 0;
+  data.forEach((item, i) => {
+    if (item.example) return;
+    total++;
+    const num = i + 1;
+    const input = document.getElementById(`input-${num}`);
+    const feedback = document.getElementById(`feedback-${num}`);
+    const userVal = normalize(input.value);
+    const correctVal = normalize(item.answer);
+    feedback.classList.add("show");
+    if (userVal === correctVal && userVal.length > 0) {
+      correctCount++;
+      input.style.borderColor = "#2e7d32";
+      feedback.className = "feedback show correct";
+      feedback.textContent = "✓ Correct!";
+    } else {
+      input.style.borderColor = "#b32d2e";
+      feedback.className = "feedback show incorrect";
+      feedback.innerHTML = `✗ Correct answer: <span class="correct-answer">${item.answer}</span>`;
+    }
+  });
+  const scorePanel = document.getElementById("score-panel");
+  const scoreText = document.getElementById("score-text");
+  scorePanel.classList.add("show");
+  scoreText.textContent = `Your score: ${correctCount} / ${total}`;
+  scorePanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function resetAll() {
+  data.forEach((item, i) => {
+    if (item.example) return;
+    const num = i + 1;
+    document.getElementById(`input-${num}`).value = "";
+    document.getElementById(`input-${num}`).style.borderColor = "#ccc";
+    document.getElementById(`feedback-${num}`).classList.remove("show");
+  });
+  document.getElementById("score-panel").classList.remove("show");
+}
+
+function sendEmail() {
+  let scoreLine = "Not checked yet";
+  let detailLines = [];
+  let hasChecked = document.getElementById("score-panel").classList.contains("show");
+  let correctCount = 0, total = 0;
+
+  data.forEach((item, i) => {
+    if (item.example) return;
+    total++;
+    const num = i + 1;
+    const input = document.getElementById(`input-${num}`);
+    const userVal = input.value.trim();
+    const isCorrect = normalize(userVal) === normalize(item.answer) && userVal.length > 0;
+    if (isCorrect) correctCount++;
+    if (hasChecked) {
+      detailLines.push(`${num}. (${item.verb}) ${item.pre} ___\n   Your answer: ${userVal || "(blank)"}\n   Status: ${isCorrect ? "Correct" : "Incorrect - correct answer: " + item.answer}`);
+    } else {
+      detailLines.push(`${num}. (${item.verb}) ${item.pre} ___\n   Your answer: ${userVal || "(blank)"}`);
+    }
+  });
+
+  if (hasChecked) scoreLine = `${correctCount} / ${total}`;
+
+  const body = `Hello!
+
+Here are my results for the exercise:
+
+FINAL SCORE: ${scoreLine}
+
+DETAILED ANSWERS:
+${detailLines.join("\n\n")}
+
+Regards,`;
+
+  const mailtoLink = `mailto:?subject=${encodeURIComponent("Exercise 5.1 Results")}&body=${encodeURIComponent(body)}`;
+  const a = document.createElement("a");
+  a.href = mailtoLink; a.target = "_blank"; a.rel = "noopener noreferrer";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+
+  setTimeout(() => {
+    const proceed = confirm("If your email app didn't open, click OK to see the message text so you can copy it manually.");
+    if (proceed) alert(body);
+  }, 600);
+}
+</script>
+</body>
