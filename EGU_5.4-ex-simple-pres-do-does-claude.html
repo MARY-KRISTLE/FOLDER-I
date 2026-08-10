@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Exercise 5.4 - Present Simple Word Order</title>
+<style>
+  :root{
+    --red:#b32d2e;
+    --orange:#e07b1a;
+    --cream:#faf3e6;
+    --dark:#2b2b2b;
+    --green:#2e7d32;
+    --wrong:#b32d2e;
+  }
+  * { box-sizing: border-box; }
+  body{
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--cream);
+    margin:0;
+    padding:24px;
+    color: var(--dark);
+  }
+  .card{
+    max-width: 720px;
+    margin: 0 auto;
+    background: #fff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  .header{
+    background: var(--red);
+    color: #fff;
+    padding: 18px 24px;
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+  }
+  .header .unit-badge{
+    background: var(--orange);
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-weight:bold;
+    font-size: 0.9em;
+  }
+  .header h1{
+    font-size: 1.3em;
+    margin:0;
+    font-weight: normal;
+  }
+  .subheader{
+    background: var(--orange);
+    color:#fff;
+    padding: 8px 24px;
+    font-size: 0.95em;
+  }
+  .body{
+    padding: 24px;
+  }
+  .instructions{
+    margin-bottom: 20px;
+    font-size: 1.02em;
+    line-height:1.5;
+  }
+  .instructions b{ color: var(--red); }
+  .item{
+    display:flex;
+    gap: 10px;
+    align-items:flex-start;
+    margin-bottom: 16px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    background: #fdfaf3;
+    border: 1px solid #eee2c8;
+  }
+  .item.example{
+    background: #f2f2f2;
+    border-color: #ddd;
+  }
+  .num{
+    font-weight:bold;
+    color: var(--orange);
+    min-width: 22px;
+  }
+  .item-content{
+    flex:1;
+  }
+  .words{
+    font-size: 0.92em;
+    color:#666;
+    margin-bottom: 6px;
+    font-style: italic;
+  }
+  input[type=text]{
+    width: 100%;
+    padding: 8px 10px;
+    font-family: Georgia, serif;
+    font-size: 1em;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+  }
+  input[type=text]:disabled{
+    background:#f2f2f2;
+    color:#555;
+    font-style: italic;
+  }
+  .feedback{
+    margin-top: 6px;
+    font-size: 0.92em;
+    display:none;
+  }
+  .feedback.show{ display:block; }
+  .feedback.correct{ color: var(--green); }
+  .feedback.incorrect{ color: var(--wrong); }
+  .correct-answer{
+    font-style: italic;
+  }
+  #check-btn, #reset-btn{
+    font-family: Georgia, serif;
+    font-size: 1em;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  #check-btn{
+    background: var(--red);
+    color: #fff;
+  }
+  #check-btn:hover{ background:#912323; }
+  #reset-btn{
+    background: #eee;
+    color: var(--dark);
+    margin-left: 10px;
+  }
+  #reset-btn:hover{ background:#ddd; }
+  #email-btn{
+    font-family: Georgia, serif;
+    font-size: 1em;
+    padding: 10px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-left: 10px;
+    background: var(--orange);
+    color: #fff;
+  }
+  #email-btn:hover{ background:#c46813; }
+  #score-panel{
+    display:none;
+    margin-top: 20px;
+    padding: 16px;
+    background: #fdf0e0;
+    border: 1px solid var(--orange);
+    border-radius: 8px;
+    text-align:center;
+  }
+  #score-panel.show{ display:block; }
+  #score-text{
+    font-size: 1.3em;
+    font-weight:bold;
+    color: var(--red);
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <span class="unit-badge">5</span>
+    <h1>Exercise 5.4 &mdash; Present Simple Word Order</h1>
+  </div>
+  <div class="subheader">Write sentences from these words. Use the right form of the verb (arrive or arrives etc.).</div>
+  <div class="body">
+    <div id="items"></div>
+    <button id="check-btn" onclick="checkAnswers()">Check answers</button>
+    <button id="reset-btn" onclick="resetAll()">Reset</button>
+    <button id="email-btn" onclick="sendEmail()">Send by email</button>
+    <div id="score-panel">
+      <div id="score-text"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const data = [
+  { words: "(always / early / Sue / arrive)", answer: "Sue always arrives early.", example: true },
+  { words: "(to the cinema / never / I / go)", answer: "I never go to the cinema." },
+  { words: "(work / Martina / hard / always)", answer: "Martina always works hard." },
+  { words: "(like / chocolate / children / usually)", answer: "Children usually like chocolate." },
+  { words: "(Jackie / parties / enjoy / always)", answer: "Jackie always enjoys parties." },
+  { words: "(often / people's names / I / forget)", answer: "I often forget people's names." },
+  { words: "(TV / Sam / watch / never)", answer: "Sam never watches TV." },
+  { words: "(usually / dinner / we / have / at 7.30)", answer: "We usually have dinner at 7.30." },
+  { words: "(Kate / always / nice clothes / wear)", answer: "Kate always wears nice clothes." }
+];
+
+const itemsDiv = document.getElementById('items');
+
+data.forEach((item, i) => {
+  const div = document.createElement('div');
+  div.className = 'item' + (item.example ? ' example' : '');
+  const num = i + 1;
+
+  if (item.example) {
+    div.innerHTML = `
+      <div class="num">${num}</div>
+      <div class="item-content">
+        <div class="words">${item.words}</div>
+        <input type="text" value="${item.answer}" disabled>
+      </div>
+    `;
+  } else {
+    div.innerHTML = `
+      <div class="num">${num}</div>
+      <div class="item-content">
+        <div class="words">${item.words}</div>
+        <input type="text" id="input-${num}" placeholder="Write your sentence...">
+        <div class="feedback" id="feedback-${num}"></div>
+      </div>
+    `;
+  }
+  itemsDiv.appendChild(div);
+});
+
+function normalize(str) {
+  return str
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, ' ')
+    .replace(/[.!?]+$/, '');
+}
+
+function checkAnswers() {
+  let correctCount = 0;
+  let total = 0;
+
+  data.forEach((item, i) => {
+    if (item.example) return;
+    total++;
+    const num = i + 1;
+    const input = document.getElementById(`input-${num}`);
+    const feedback = document.getElementById(`feedback-${num}`);
+    const userVal = normalize(input.value);
+    const correctVal = normalize(item.answer);
+
+    feedback.classList.add('show');
+
+    if (userVal === correctVal && userVal.length > 0) {
+      correctCount++;
+      input.style.borderColor = '#2e7d32';
+      feedback.className = 'feedback show correct';
+      feedback.textContent = '✓ Correct!';
+    } else {
+      input.style.borderColor = '#b32d2e';
+      feedback.className = 'feedback show incorrect';
+      feedback.innerHTML = `✗ Correct answer: <span class="correct-answer">${item.answer}</span>`;
+    }
+  });
+
+  const scorePanel = document.getElementById('score-panel');
+  const scoreText = document.getElementById('score-text');
+  scorePanel.classList.add('show');
+  scoreText.textContent = `Your score: ${correctCount} / ${total}`;
+  scorePanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function sendEmail() {
+  let scoreLine = "Not checked yet";
+  let detailLines = [];
+  let hasChecked = document.getElementById('score-panel').classList.contains('show');
+
+  let correctCount = 0;
+  let total = 0;
+
+  data.forEach((item, i) => {
+    if (item.example) return;
+    total++;
+    const num = i + 1;
+    const input = document.getElementById(`input-${num}`);
+    const userVal = input.value.trim();
+    const isCorrect = normalize(userVal) === normalize(item.answer) && userVal.length > 0;
+    if (isCorrect) correctCount++;
+
+    if (hasChecked) {
+      detailLines.push(
+        `${num}. ${item.words}\n   Your answer: ${userVal || "(blank)"}\n   Status: ${isCorrect ? "Correct" : "Incorrect - correct answer: " + item.answer}`
+      );
+    } else {
+      detailLines.push(`${num}. ${item.words}\n   Your answer: ${userVal || "(blank)"}`);
+    }
+  });
+
+  if (hasChecked) {
+    scoreLine = `${correctCount} / ${total}`;
+  }
+
+  const body =
+`Hello!
+
+Here are my results for the exercise:
+
+FINAL SCORE: ${scoreLine}
+
+DETAILED ANSWERS:
+${detailLines.join('\n\n')}
+
+Regards,`;
+
+  const subject = "Exercise 5.4 Results";
+  const mailtoLink = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+  // Create and click a real anchor - more reliable than location.href in sandboxed frames
+  const a = document.createElement('a');
+  a.href = mailtoLink;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+
+  // Fallback: if nothing happened (some sandboxes block this too), show the text so it can be copied manually
+  setTimeout(() => {
+    const proceed = confirm("If your email app didn't open, click OK to see the message text so you can copy it manually.");
+    if (proceed) {
+      alert(body);
+    }
+  }, 600);
+}
+
+function resetAll() {
+  data.forEach((item, i) => {
+    if (item.example) return;
+    const num = i + 1;
+    const input = document.getElementById(`input-${num}`);
+    const feedback = document.getElementById(`feedback-${num}`);
+    input.value = '';
+    input.style.borderColor = '#ccc';
+    feedback.classList.remove('show');
+  });
+  document.getElementById('score-panel').classList.remove('show');
+}
+</script>
+</body>
+</html>
