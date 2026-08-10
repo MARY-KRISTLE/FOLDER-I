@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Exercise 5.3 - Present Simple</title>
+<style>
+  :root{ --red:#b32d2e; --orange:#e07b1a; --cream:#faf3e6; --dark:#2b2b2b; --green:#2e7d32; --wrong:#b32d2e; }
+  * { box-sizing: border-box; }
+  body{ font-family: Georgia, 'Times New Roman', serif; background: var(--cream); margin:0; padding:24px; color: var(--dark); }
+  .card{ max-width: 760px; margin: 0 auto; background: #fff; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,0.08); }
+  .header{ background: var(--red); color: #fff; padding: 18px 24px; display:flex; align-items:baseline; gap:12px; }
+  .header .unit-badge{ background: var(--orange); padding: 4px 10px; border-radius: 4px; font-weight:bold; font-size: 0.9em; }
+  .header h1{ font-size: 1.3em; margin:0; font-weight: normal; }
+  .subheader{ background: var(--orange); color:#fff; padding: 8px 24px; font-size: 0.95em; }
+  .body{ padding: 24px; }
+  .wordbank{ display:flex; flex-wrap:wrap; gap:8px 14px; margin-bottom:22px; padding: 12px 16px; background: #fdf0e0; border: 1px solid var(--orange); border-radius: 8px; }
+  .wordbank .label{ font-style: italic; color:#666; width:100%; margin-bottom:2px; }
+  .wordbank span.word{ font-weight:bold; color:var(--red); }
+  .wordbank span.word.used{ text-decoration: line-through; color:#999; }
+  .item{ display:flex; gap: 10px; align-items:flex-start; margin-bottom: 12px; padding: 10px 12px; border-radius: 6px; background: #fdfaf3; border: 1px solid #eee2c8; }
+  .item.example{ background: #f2f2f2; border-color: #ddd; }
+  .num{ font-weight:bold; color: var(--orange); min-width: 22px; }
+  .item-content{ flex:1; }
+  .sentence-text{ line-height:1.5; }
+  input[type=text]{ width: 160px; padding: 6px 8px; font-family: Georgia, serif; font-size: 1em; border: 1px solid #ccc; border-radius: 4px; background: #fff; margin: 0 4px; }
+  input[type=text]:disabled{ background:#f2f2f2; color:#555; font-style: italic; }
+  .feedback{ margin-top: 6px; font-size: 0.92em; display:none; }
+  .feedback.show{ display:block; }
+  .feedback.correct{ color: var(--green); }
+  .feedback.incorrect{ color: var(--wrong); }
+  .correct-answer{ font-style: italic; }
+  #check-btn, #reset-btn, #email-btn{ font-family: Georgia, serif; font-size: 1em; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; margin-top: 10px; }
+  #check-btn{ background: var(--red); color: #fff; }
+  #check-btn:hover{ background:#912323; }
+  #reset-btn{ background: #eee; color: var(--dark); margin-left: 10px; }
+  #reset-btn:hover{ background:#ddd; }
+  #email-btn{ background: var(--orange); color: #fff; margin-left: 10px; }
+  #email-btn:hover{ background:#c46813; }
+  #score-panel{ display:none; margin-top: 20px; padding: 16px; background: #fdf0e0; border: 1px solid var(--orange); border-radius: 8px; text-align:center; }
+  #score-panel.show{ display:block; }
+  #score-text{ font-size: 1.3em; font-weight:bold; color: var(--red); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <span class="unit-badge">5</span>
+    <h1>Exercise 5.3 &mdash; Present Simple</h1>
+  </div>
+  <div class="subheader">Complete the sentences.</div>
+  <div class="body">
+    <div class="wordbank">
+      <span class="label">Use:</span>
+      <span class="word">boil</span><span class="word">close</span><span class="word">cost</span><span class="word">cost</span><span class="word">like</span><span class="word">like</span><span class="word">meet</span><span class="word">open</span><span class="word used">speak</span><span class="word">teach</span><span class="word">wash</span>
+    </div>
+
+    <div id="items"></div>
+
+    <button id="check-btn" onclick="checkAnswers()">Check answers</button>
+    <button id="reset-btn" onclick="resetAll()">Reset</button>
+    <button id="email-btn" onclick="sendEmail()">Send by email</button>
+    <div id="score-panel"><div id="score-text"></div></div>
+  </div>
+</div>
+
+<script>
+const data = [
+  { pre: "Maria", answer: "speaks", tail: "four languages.", example: true },
+  { pre: "The shops in the city centre usually", answer: "open", tail: "at 9 o'clock in the morning." },
+  { pre: "The City Museum", answer: "closes", tail: "at 5 o'clock in the evening." },
+  { pre: "Tina is a teacher. She", answer: "teaches", tail: "mathematics to young children." },
+  { pre: "My job is very interesting. I", answer: "meet", tail: "a lot of people." },
+  { pre: "Peter's car is always dirty. He never", answer: "washes", tail: "it." },
+  { pre: "Food is expensive. It", answer: "costs", tail: "a lot of money." },
+  { pre: "Shoes are expensive. They", answer: "cost", tail: "a lot of money." },
+  { pre: "Water", answer: "boils", tail: "at 100 degrees Celsius." },
+  { pre: "Laura and I are good friends. I", answer: "like", tail: "her and she", answer2: "likes", tail2: "me." }
+];
+
+const itemsDiv = document.getElementById("items");
+
+data.forEach((item, i) => {
+  const num = i + 1;
+  const div = document.createElement("div");
+  div.className = "item" + (item.example ? " example" : "");
+
+  if (item.example) {
+    div.innerHTML = `
+      <div class="num">${num}</div>
+      <div class="item-content">
+        <div class="sentence-text">${item.pre} <input type="text" value="${item.answer}" disabled> ${item.tail}</div>
+      </div>
+    `;
+  } else if (item.answer2 !== undefined) {
+    // double-blank sentence (#10)
+    div.innerHTML = `
+      <div class="num">${num}</div>
+      <div class="item-content">
+        <div class="sentence-text">${item.pre} <input type="text" id="input-${num}a" placeholder="..."> ${item.tail} <input type="text" id="input-${num}b" placeholder="..."> ${item.tail2}</div>
+        <div class="feedback" id="feedback-${num}"></div>
+      </div>
+    `;
+  } else {
+    div.innerHTML = `
+      <div class="num">${num}</div>
+      <div class="item-content">
+        <div class="sentence-text">${item.pre} <input type="text" id="input-${num}" placeholder="..."> ${item.tail}</div>
+        <div class="feedback" id="feedback-${num}"></div>
+      </div>
+    `;
+  }
+  itemsDiv.appendChild(div);
+});
+
+function normalize(str) { return str.trim().toLowerCase().replace(/\s+/g, " "); }
+
+function checkAnswers() {
+  let correctCount = 0, total = 0;
+
+  data.forEach((item, i) => {
+    if (item.example) return;
+    const num = i + 1;
+    const feedback = document.getElementById(`feedback-${num}`);
+    feedback.classList.add("show");
+
+    if (item.answer2 !== undefined) {
+      total += 2;
+      const inputA = document.getElementById(`input-${num}a`);
+      const inputB = document.getElementById(`input-${num}b`);
+      const okA = normalize(inputA.value) === normalize(item.answer) && inputA.value.trim().length > 0;
+      const okB = normalize(inputB.value) === normalize(item.answer2) && inputB.value.trim().length > 0;
+      if (okA) correctCount++;
+      if (okB) correctCount++;
+      inputA.style.borderColor = okA ? "#2e7d32" : "#b32d2e";
+      inputB.style.borderColor = okB ? "#2e7d32" : "#b32d2e";
+      if (okA && okB) {
+        feedback.className = "feedback show correct";
+        feedback.textContent = "✓ Correct!";
+      } else {
+        feedback.className = "feedback show incorrect";
+        feedback.innerHTML = `✗ Correct answers: <span class="correct-answer">${item.answer} / ${item.answer2}</span>`;
+      }
+    } else {
+      total++;
+      const input = document.getElementById(`input-${num}`);
+      const userVal = normalize(input.value);
+      const correctVal = normalize(item.answer);
+      if (userVal === correctVal && userVal.length > 0) {
+        correctCount++;
+        input.style.borderColor = "#2e7d32";
+        feedback.className = "feedback show correct";
+        feedback.textContent = "✓ Correct!";
+      } else {
+        input.style.borderColor = "#b32d2e";
+        feedback.className = "feedback show incorrect";
+        feedback.innerHTML = `✗ Correct answer: <span class="correct-answer">${item.answer}</span>`;
+      }
+    }
+  });
+
+  const scorePanel = document.getElementById("score-panel");
+  const scoreText = document.getElementById("score-text");
+  scorePanel.classList.add("show");
+  scoreText.textContent = `Your score: ${correctCount} / ${total}`;
+  scorePanel.scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+function resetAll() {
+  data.forEach((item, i) => {
+    if (item.example) return;
+    const num = i + 1;
+    if (item.answer2 !== undefined) {
+      document.getElementById(`input-${num}a`).value = "";
+      document.getElementById(`input-${num}b`).value = "";
+      document.getElementById(`input-${num}a`).style.borderColor = "#ccc";
+      document.getElementById(`input-${num}b`).style.borderColor = "#ccc";
+    } else {
+      document.getElementById(`input-${num}`).value = "";
+      document.getElementById(`input-${num}`).style.borderColor = "#ccc";
+    }
+    document.getElementById(`feedback-${num}`).classList.remove("show");
+  });
+  document.getElementById("score-panel").classList.remove("show");
+}
+
+function sendEmail() {
+  let scoreLine = "Not checked yet";
+  let detailLines = [];
+  let hasChecked = document.getElementById("score-panel").classList.contains("show");
+  let correctCount = 0, total = 0;
+
+  data.forEach((item, i) => {
+    if (item.example) return;
+    const num = i + 1;
+
+    if (item.answer2 !== undefined) {
+      total += 2;
+      const inputA = document.getElementById(`input-${num}a`);
+      const inputB = document.getElementById(`input-${num}b`);
+      const valA = inputA.value.trim();
+      const valB = inputB.value.trim();
+      const okA = normalize(valA) === normalize(item.answer) && valA.length > 0;
+      const okB = normalize(valB) === normalize(item.answer2) && valB.length > 0;
+      if (okA) correctCount++;
+      if (okB) correctCount++;
+      if (hasChecked) {
+        detailLines.push(`${num}. Your answers: ${valA || "(blank)"} / ${valB || "(blank)"}\n   Status: ${(okA && okB) ? "Correct" : "Incorrect - correct answers: " + item.answer + " / " + item.answer2}`);
+      } else {
+        detailLines.push(`${num}. Your answers: ${valA || "(blank)"} / ${valB || "(blank)"}`);
+      }
+    } else {
+      total++;
+      const input = document.getElementById(`input-${num}`);
+      const userVal = input.value.trim();
+      const isCorrect = normalize(userVal) === normalize(item.answer) && userVal.length > 0;
+      if (isCorrect) correctCount++;
+      if (hasChecked) {
+        detailLines.push(`${num}. Your answer: ${userVal || "(blank)"}\n   Status: ${isCorrect ? "Correct" : "Incorrect - correct answer: " + item.answer}`);
+      } else {
+        detailLines.push(`${num}. Your answer: ${userVal || "(blank)"}`);
+      }
+    }
+  });
+
+  if (hasChecked) scoreLine = `${correctCount} / ${total}`;
+
+  const body = `Hello!
+
+Here are my results for the exercise:
+
+FINAL SCORE: ${scoreLine}
+
+DETAILED ANSWERS:
+${detailLines.join("\n\n")}
+
+Regards,`;
+
+  const mailtoLink = `mailto:?subject=${encodeURIComponent("Exercise 5.3 Results")}&body=${encodeURIComponent(body)}`;
+  const a = document.createElement("a");
+  a.href = mailtoLink; a.target = "_blank"; a.rel = "noopener noreferrer";
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+
+  setTimeout(() => {
+    const proceed = confirm("If your email app didn't open, click OK to see the message text so you can copy it manually.");
+    if (proceed) alert(body);
+  }, 600);
+}
+</script>
+</body>
+</html>
